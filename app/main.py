@@ -17,7 +17,16 @@ app.include_router(router)
 SOURCES = [
     {"type": "api", "name": "jsonposts", "url": "https://jsonplaceholder.typicode.com/posts"},
     {"type": "csv", "name": "local_csv", "path": "./data/sample.csv"},
-    {"type": "api", "name": "coingecko_markets", "url": "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=100&page=1&sparkline=false"},
+    {
+        "type": "api", 
+        "name": "coingecko", 
+        "url": "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd"
+    },
+    {
+        "type": "api", 
+        "name": "coinpaprika", 
+        "url": "https://api.coinpaprika.com/v1/tickers"
+    }
 ]
 
 @app.get("/")

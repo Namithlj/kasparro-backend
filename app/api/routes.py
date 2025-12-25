@@ -50,9 +50,11 @@ def get_data(
 @router.get("/health", response_model=HealthResponse)
 def health(db: Session = Depends(get_db)):
     try:
-        db.execute("SELECT 1")
+        # Wrap the string in text() for SQLAlchemy 2.0 compatibility
+        db.execute(text("SELECT 1")) 
         db_ok = True
-    except Exception:
+    except Exception as e:
+        print(f"Health check failed: {e}")
         db_ok = False
         
     cp = db.query(Checkpoint).order_by(Checkpoint.id.desc()).first()
