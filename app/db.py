@@ -2,26 +2,29 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
 from .config import settings
 from urllib.parse import urlparse
+import os
 
+# SAFETY FALLBACK: Use local sqlite if environment variable is missing
+# This prevents the 'NoneType' has no attribute 'startswith' error
+db_url = settings.DATABASE_URL or "sqlite:///./data/dev.db"
 
-# Configure DBAPI connection args and engine options
-if settings.DATABASE_URL.startswith("sqlite"):
+if db_url.startswith("sqlite"):
+    # Create the data directory if it doesn't exist
+    os.makedirs("./data", exist_ok=True)
     connect_args = {"check_same_thread": False}
-    engine = create_engine(settings.DATABASE_URL, connect_args=connect_args)
 else:
-    # Default connect args for psycopg2; apply SSL when connecting to Render external hosts
     connect_args = {}
-    parsed = urlparse(settings.DATABASE_URL)
+    parsed = urlparse(db_url)
     hostname = parsed.hostname or ""
-    if hostname.endswith(".render.com"):
+    # Render and many cloud providers require SSL for external connections
+    if hostname.endswith(".render.com") or "amazonaws.com" in hostname:
         connect_args["sslmode"] = "require"
 
-    # Enable pool_pre_ping to avoid stale/closed connections
-    engine = create_engine(settings.DATABASE_URL, connect_args=connect_args, pool_pre_ping=True)
+# Enable pool_pre_ping to avoid stale/closed connections
+engine = create_engine(db_url, connect_args=connect_args, pool_pre_ping=True)
 
 SessionLocal = sessionmaker(bind=engine)
 Base = declarative_base()
-
 
 def get_db():
     db = SessionLocal()
