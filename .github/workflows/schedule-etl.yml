@@ -1,0 +1,18 @@
+name: Scheduled ETL trigger
+
+on:
+  schedule:
+    - cron: '*/15 * * * *' # every 15 minutes (adjust as needed)
+  workflow_dispatch: {}
+
+jobs:
+  trigger:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger ETL endpoint
+        env:
+          API_URL: ${{ secrets.DEPLOYED_URL }}
+          API_KEY: ${{ secrets.API_KEY }}
+        run: |
+          if [ -z "$API_URL" ]; then echo "DEPLOYED_URL secret not set"; exit 1; fi
+          curl -X POST "$API_URL/run-etl" -H "Content-Type: application/json" -H "x-api-key: $API_KEY" -d '{}' -sS

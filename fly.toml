@@ -1,0 +1,8 @@
+app = "kasparro-backend"
+
+[build]
+  image = "kasparro-backend:latest"
+
+[env]
+  DATABASE_URL = "postgresql+psycopg2://postgres:postgres@db:5432/postgres"
+  ETL_INTERVAL_SECONDS = "60"
