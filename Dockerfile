@@ -1,11 +1,11 @@
 # Stage 1: Build dependencies
-FROM python:3.13-slim AS build-stage
+FROM python:3.12-slim AS build-stage
 WORKDIR /app
 COPY requirements.txt .
 RUN pip install --user --no-cache-dir -r requirements.txt
 
 # Stage 2: Final Runtime Image
-FROM python:3.13-slim
+FROM python:3.12-slim
 WORKDIR /app
 COPY --from=build-stage /root/.local /root/.local
 COPY . .

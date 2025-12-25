@@ -5,5 +5,5 @@ pydantic==2.12.5
 pydantic-settings==2.12.0
 requests==2.31.0
 python-dotenv==1.1.1
-psycopg2-binary==2.9.9
+psycopg[binary]
 greenlet==3.2.4
