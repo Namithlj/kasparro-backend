@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, Request
+from fastapi import APIRouter, Depends, Request, Header
 from sqlalchemy.orm import Session
 from typing import Optional
 from ..db import get_db
@@ -11,6 +11,11 @@ from ..etl import run_etl as run_etl_now
 from ..db import SessionLocal
 
 router = APIRouter()
+
+
+@router.get("/")
+def root():
+    return {"message": "Kasparro Backend Assessment", "docs": "/docs", "health": "/health"}
 
 
 @router.get("/data", response_model=list[ItemOut])
@@ -50,9 +55,10 @@ def stats(db: Session = Depends(get_db)):
     return {"records_processed": total, "last_checkpoint": (cp.meta if cp else None)}
 
 @router.post("/run-etl")
-def run_etl_endpoint(x_api_key: str = None):
-    # simple API key check
-    if settings.API_KEY and x_api_key != settings.API_KEY:
+def run_etl_endpoint(x_api_key: Optional[str] = None, x_api_key_header: Optional[str] = Header(None, alias="x-api-key")):
+    # accept API key from query (`x_api_key`) or header (`x-api-key`)
+    effective_key = x_api_key_header or x_api_key
+    if settings.API_KEY and effective_key != settings.API_KEY:
         from fastapi import HTTPException
 
         raise HTTPException(status_code=401, detail="unauthorized")
