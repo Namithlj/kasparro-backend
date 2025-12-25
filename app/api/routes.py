@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, Request, Header, HTTPException
 from sqlalchemy.orm import Session
+from sqlalchemy import text  # <--- Add this at the top with other imports
 from sqlalchemy import func
 from typing import Optional, List
 import time
@@ -13,10 +14,9 @@ from ..services.ingestion import run_etl as run_etl_now
 
 router = APIRouter()
 
-@router.get("/")
-def root():
+@router.get("/", operation_id="api_router_root") # Unique ID for Swagger
+def api_root(): # Rename function from 'root' to 'api_root'
     return {"message": "Kasparro Unified Backend", "docs": "/docs", "health": "/health"}
-
 @router.get("/data", response_model=List[ItemOut])
 def get_data(
     request: Request, 

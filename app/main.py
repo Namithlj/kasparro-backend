@@ -1,4 +1,5 @@
 from fastapi import FastAPI, Request
+from sqlalchemy import text
 from .api.routes import router
 from .etl import init_db, start_background_etl
 from .config import settings
