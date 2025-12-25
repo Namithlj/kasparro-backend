@@ -5,3 +5,4 @@ requests==2.31.0
 pydantic==1.10.12
 pytest==7.4.0
 httpx==0.24.1
+psycopg2-binary>=2.9
